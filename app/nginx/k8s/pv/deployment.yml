@@ -1,0 +1,30 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  namespace: nginx
+  name: "nginx-deployment"
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template: 
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+        - name: "nginx-pv-storage"
+          persistentVolumeClaim:
+            claimName: "nfs-pvc"
+      containers:
+        - name: nginx
+          image: nginx:1.2
+          ports:
+            - containerPort: 80
+              name: "nginx"
+          volumeMounts:
+            - mountPath: "/var/www/html"
+              name: "nginx-pv-storage"
