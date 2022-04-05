@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  init.sql: |
+    create table student (id int, name varchar(50));
+    insert into student(id,name) values( 1, 'sule');
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: mysql-all-init-cm

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-all-statefulset
+spec:
+  replicas: 1
+  serviceName: mysql-all-service
+  selector:
+    matchLabels:
+      app: mysql-all-service
+  template:
+    metadata:
+      labels:
+        app: mysql-all-service
+    spec:
+      volumes:
+      - name: mysql-all-init-cm
+        configMap:
+          name: mysql-all-init-cm
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mysql
+          image: mysql:latest
+          ports:
+            - name: "mysql"
+              protocol: TCP
+              containerPort: 80
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom: 
+               secretKeyRef: 
+                key: MYSQL_ROOT_PASSWORD
+                name: mysql-all-secret
+          volumeMounts:
+            - name: mysql-all-init-cm
+              mountPath: /sule
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-all-pvc
+      spec:
+        storageClassName: mysql-all-sc
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 3Gi
